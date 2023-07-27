@@ -17,7 +17,7 @@ Here's an example of how to use the lexer app:
 
 ```javascript
 // Import the lexer module
-const Lexer = require("./lexer");
+import { Lexer } from ".src/Parser";
 
 // Define the rules for tokenizing
 const rules = [
@@ -26,6 +26,23 @@ const rules = [
   { pattern: /\+|-|\*|\/|%/, type: "OPERATOR" },
   { pattern: /=/, type: "ASSIGNMENT" },
   { pattern: /;/, type: "SEMICOLON" },
+  { pattern: /'[^']*'/, type: "STRING" },
+  { pattern: /"[^"]*"/, type: "STRING" },
+  { pattern: /\(/, type: "LEFT_PAREN" },
+  { pattern: /\)/, type: "RIGHT_PAREN" },
+  { pattern: /\[/, type: "LEFT_BRACKET" },
+  { pattern: /]/, type: "RIGHT_BRACKET" },
+  { pattern: /\{/, type: "LEFT_BRACE" },
+  { pattern: /}/, type: "RIGHT_BRACE" },
+  { pattern: /==|!=|<|<=|>|>=/, type: "COMPARISON_OPERATOR" },
+  { pattern: /&&|\|\|/, type: "LOGICAL_OPERATOR" },
+  { pattern: /if/, type: "IF" },
+  { pattern: /else/, type: "ELSE" },
+  { pattern: /while/, type: "WHILE" },
+  { pattern: /function/, type: "FUNCTION" },
+  { pattern: /\/\/.*/, type: "COMMENT" },
+  { pattern: /\/\*[\s\S]*?\*\//, type: "COMMENT" },
+  { pattern: /\s+/, type: "WHITESPACE", ignore: true },
 ];
 
 // Create a new lexer instance
@@ -33,6 +50,9 @@ const lexer = new Lexer(rules);
 
 // Tokenize input text
 const tokens = lexer.tokenize("x = 10 + 5;");
+// Tokenize a math expression
+const expression = "sin(PI/2) + pow(2, 3);";
+const tokens = lexer.tokenize(expression);
 
 // Print the tokens
 tokens.forEach((token) => console.log(token));
