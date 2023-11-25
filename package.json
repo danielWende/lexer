@@ -1,0 +1,19 @@
+{
+  "name": "lexer",
+  "version": "1.0.0",
+  "description": "lexer javascript",
+  "main": "__tests__/run.js",
+  "scripts": {
+    "test": "node run.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielWende/lexer.git"
+  },
+  "author": "daniel wendemneh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielWende/lexer/issues"
+  },
+  "homepage": "https://github.com/danielWende/lexer#readme"
+}
