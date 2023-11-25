@@ -72,12 +72,4 @@ Feel free to explore the code and make changes as needed to suit your particular
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). Feel free to use and modify it according to your needs.
-
-## Acknowledgements
-
-The lexer app is inspired by the principles of lexical analysis and tokenization. It builds upon the foundational concepts of programming language design and parsing.
-
-## Contact
-
-If you have any questions, suggestions, or issues, please contact [your-email@example.com](mailto:your-email@example.com).
+Feel free to use and modify it according to your needs.
