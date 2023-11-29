@@ -55,6 +55,7 @@ class Parser {
 
   private Statement(): ASTNode {
     if (!this._lookahead) return this.WhileStatement();
+
     switch (this._lookahead.type) {
       case "NUMBER":
         return this.NumericLiteral();
@@ -69,6 +70,10 @@ class Parser {
           return this.WhileStatement();
         } else if (this._lookahead.value === "function") {
           return this.FunctionDeclaration();
+        } else if (this._lookahead.value === "const") {
+          return this.ConstDeclaration();
+        } else if (this._lookahead.value === "let") {
+          return this.LetDeclaration();
         } else {
           return this.SemicolonLiteral();
         }
@@ -76,7 +81,12 @@ class Parser {
         if (["+", "-", "*", "/", "%"].includes(this._lookahead.value)) {
           return this.BinaryExpression();
         }
-        throw new SyntaxError(`Unexpected token: "${this._lookahead.value}"`);
+      case "ASSIGNMENT":
+        return this.AssignmentExpression();
+      case "EQUAL":
+        return this.EqualExpression();
+      case "STRICT_EQUAL":
+        return this.StrictEqualExpression();
       case "COMPARISON_OPERATOR":
         return this.ComparisonExpression();
       case "PUNCTUATION":
@@ -84,7 +94,6 @@ class Parser {
         return {
           type: "Punctuation",
         };
-
       case "IF":
         return this.IfStatement();
       case "ELSE":
@@ -322,20 +331,58 @@ class Parser {
     return this.AssignmentExpression();
   }
 
-  private AssignmentExpression(): ASTNode {
-    const left = this.PrimaryExpression();
+  // private AssignmentExpression(): ASTNode {
+  //   const left = this.PrimaryExpression();
 
-    if (this._lookahead && this._lookahead.type === "ASSIGNMENT") {
-      this._eat("ASSIGNMENT");
-      const right = this.AssignmentExpression();
+  //   if (this._lookahead && this._lookahead.type === "ASSIGNMENT") {
+  //     this._eat("ASSIGNMENT");
+  //     const right = this.AssignmentExpression();
+  //     return {
+  //       type: "AssignmentExpression",
+  //       left,
+  //       right,
+  //     };
+  //   }
+
+  //   return left;
+  // }
+  private StrictEqualExpression(): ASTNode {
+    const left = this.EqualExpression();
+    if (this._lookahead && this._lookahead.type === "STRICT_EQUAL") {
+      this._eat("STRICT_EQUAL");
+      const right = this.EqualExpression();
       return {
-        type: "AssignmentExpression",
+        type: "BinaryExpression",
+        operator: "===",
         left,
         right,
       };
     }
-
     return left;
+  }
+
+  private EqualExpression(): ASTNode {
+    const left = this.AssignmentExpression();
+    if (this._lookahead && this._lookahead.type === "EQUAL") {
+      this._eat("EQUAL");
+      const right = this.AssignmentExpression();
+      return {
+        type: "BinaryExpression",
+        operator: "==",
+        left,
+        right,
+      };
+    }
+    return left;
+  }
+
+  private AssignmentExpression(): ASTNode {
+    // Implement your logic for assignment expressions
+    // This is just a placeholder, replace it with your actual implementation
+    return {
+      type: "AssignmentExpression",
+      operator: "=",
+    };
   }
 
   private BinaryExpression(): ASTNode {
@@ -378,6 +425,7 @@ class Parser {
 
   private _eat(tokenType: string): Token {
     const token = this._lookahead;
+
     if (token == null) {
       throw new SyntaxError(
         `Unexpected end of input, expected: "${tokenType}"`
