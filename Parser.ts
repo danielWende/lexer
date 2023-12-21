@@ -81,6 +81,8 @@ class Parser {
         if (["+", "-", "*", "/", "%"].includes(this._lookahead.value)) {
           return this.BinaryExpression();
         }
+      case "SEMICOLON":
+        return this.SemicolonLiteral();
       case "ASSIGNMENT":
         return this.AssignmentExpression();
       case "EQUAL":
@@ -437,10 +439,11 @@ class Parser {
         `Unexpected token: "${token.value}", expected: "${tokenType}"`
       );
     }
-    console.log(`Eating token: ${tokenType}, Value: ${token.value}`);
+    // console.log(`Eating token: ${tokenType}, Value: ${token.value}`);
 
     this._lookahead = this._tokenizer.getNextToken();
 
+    console.log("🚀 ~ file: Parser.ts:447 ~ Parser ~ _eat ~ token:", token);
     return token;
   }
 }

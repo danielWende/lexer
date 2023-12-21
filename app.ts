@@ -13,7 +13,9 @@ const rules: Rule[] = [
   { pattern: /"[^"]*"/, type: "STRING" },
   { pattern: /[+\-*/%]/, type: "OPERATOR" },
   { pattern: /\d+\.\d+/, type: "FLOAT" },
+  { pattern: /===/, type: "STRICT_EQUAL" },
   { pattern: /\d+/, type: "NUMBER" },
+  { pattern: /=/, type: "ASSIGNMENT" },
   { pattern: /;/, type: "SEMICOLON" },
   { pattern: /\(/, type: "LEFT_PAREN" },
   { pattern: /\)/, type: "RIGHT_PAREN" },
@@ -29,16 +31,38 @@ const rules: Rule[] = [
   { pattern: /let/i, type: "LET" },
   { pattern: /true|false/i, type: "BOOLEAN" },
   { pattern: /null/i, type: "NULL" },
-  { pattern: /[a-zA-Z_]\w*/, type: "IDENTIFIER" },
   { pattern: /&|\||\^|~|<</, type: "BITWISE_OPERATOR" },
   { pattern: /\?/, type: "TERNARY_CONDITIONAL" },
-  { pattern: /===/, type: "STRICT_EQUAL" },
   { pattern: /==/, type: "EQUAL" },
-  { pattern: /=/, type: "ASSIGNMENT" },
+  { pattern: /[a-zA-Z_]\w*/, type: "IDENTIFIER" },
 ];
 const parser = new Parser(rules);
 
-const program = `const x = 10;`;
+const program = `
+const whitespace = " ";
+const singleQuotesString = 'Hello, world!';
+const doubleQuotesString = "Hello, again!";
+const operator = + - * / %;
+const floatNumber = 3.14;
+const integerNumber = 42;
+const semicolon = ;
+if (true){
+
+}else{
+
+}
+while (condition){
+
+}
+function myFunction(){
+
+}
+const myConst = 123;
+let myLet = "abc";
+const myBoolean = true;
+const myNull = null;
+
+`;
 
 const ast = parser.parse(program);
 console.log(JSON.stringify(ast, null, 2));

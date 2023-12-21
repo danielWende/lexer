@@ -27,32 +27,85 @@ class Tokenizer {
    *
    */
 
+  // getNextToken() {
+  //   if (!this.hasMoreTokens()) return null;
+
+  //   const string = this._string.slice(this._cursor);
+
+  //   // Track the first match found
+  //   let firstMatch = null;
+
+  //   for (const rule of this._rules) {
+  //     const regex = new RegExp(rule.pattern);
+  //     const match = string.match(regex);
+
+  //     if (
+  //       match &&
+  //       ((!firstMatch || match.index) ??
+  //         Infinity < firstMatch.index ??
+  //         Infinity)
+  //     ) {
+  //       firstMatch = {
+  //         type: rule.type,
+  //         value: match[0],
+  //         index: match.index ?? 0, // Default to 0 if match.index is undefined
+  //       };
+  //     }
+  //   }
+  //   if (firstMatch) {
+  //     // Move cursor to the position after the first match
+  //     this._cursor += firstMatch.index + firstMatch.value.length;
+  //     return {
+  //       type: firstMatch.type,
+  //       value: firstMatch.value,
+  //     };
+  //   }
+
+  //   // If no match is found, move cursor to the next character
+  //   this._cursor++;
+  //   return null;
+  // }
   getNextToken() {
     if (!this.hasMoreTokens()) return null;
 
-    const string = this._string.slice(this._cursor);
+    this._string = this._string.slice(this._cursor);
+    let matches: any[] = [];
 
-    // Check all rules in the order they appear in the rules array
-    for (const rule of this._rules) {
+    for (const [index, rule] of this._rules) {
+      if (rule.ignore) continue;
       const regex = new RegExp(rule.pattern);
-      const match = string.match(regex);
+      const match = this._string.match(regex);
 
-      if (match) {
-        if (!rule.ignore) {
-          this._cursor += match[0].length || 1;
-          return {
-            type: rule.type,
-            value: match[0],
-          };
-        }
+      if (
+        match
+        // !matches.some((prevMatch) => prevMatch.index === match.index)
+      ) {
+        matches.push({
+          type: rule.type,
+          value: match[0],
+          index: match.index ?? 0,
+        });
       }
     }
 
-    // If no match is found, move cursor to the next character
+    // Sort matches by their index in ascending order
+    matches.sort((a, b) => a.index - b.index);
+
+    if (matches.length > 0) {
+      const firstMatch = matches[0];
+
+      this._cursor += firstMatch.value.length;
+      return {
+        type: firstMatch.type,
+        value: firstMatch.value,
+      };
+    }
+
     this._cursor++;
     return null;
   }
 }
+
 interface Token {
   type: string; // Type of the token (e.g., "NUMBER", "STRING", "IDENTIFIER")
   value: string; // The actual value of the token (e.g., the numeric value, string content, identifier name)
